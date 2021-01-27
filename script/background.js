@@ -10,7 +10,7 @@ window.addEventListener('resize', setCanvasSize);
 window.addEventListener('load', () => {
     canvas = document.getElementById('background');
     setCanvasSize();
-    //window.setInterval(animate, 1000 / 25);
+    window.setInterval(animate, 1000 / 30);
 });
 
 function setCanvasSize() {
@@ -18,7 +18,7 @@ function setCanvasSize() {
     canvas.setAttribute('height', window.innerHeight);
     ctx = canvas.getContext('2d');
     if (colors.length == 0) initColors();
-    for (let i = 0; i < 100; ++i) draw();
+    draw();
 }
 
 function initColors() {
