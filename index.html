@@ -7,17 +7,33 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
         <link rel="stylesheet" href="style.css">
-        <script defer src="script/main.js"></script>
-        <script defer src="script/background.js"></script>
+        <script defer src="script.js"></script>
     </head>
 
     <body>
         <noscript>JavaScript is required.</noscript>
-        <canvas id="background"></canvas>
-        <canvas id="foreground"></canvas>
+        <canvas id="canvas"></canvas>
 
-        <article>
-            
+        <article class="hidden">
+            <input type="number" id="size" value="25"/>
+            <input type="number" id="points" value="5"/>
+            <input type="number" id="shapeSpeed" value="5"/>
+            <input type="number" id="colorSpeed" value="10"/>
+
+            <section class="rangeSlider">
+                <input type="range" class="min red" min="0" max="255" value="0">
+                <input type="range" class="max red" min="0" max="255" value="255">
+            </section>
+
+            <section class="rangeSlider">
+                <input type="range" class="min green" min="0" max="255" value="0">
+                <input type="range" class="max green" min="0" max="255" value="255">
+            </section>
+
+            <section class="rangeSlider">
+                <input type="range" class="min blue" min="0" max="255" value="0">
+                <input type="range" class="max blue" min="0" max="255" value="255">
+            </section>
         </article>
     </body>
 </html>
