@@ -5,6 +5,7 @@
     scrollbar-width: none;
     box-sizing: border-box;
     font-family: Arial, Helvetica, sans-serif;
+    user-select: none;
 }
 
 *:focus {
@@ -20,8 +21,6 @@ html, body {
     height: 100%;
     position: relative;
     background-color: black;
-    font-size: 1rem;
-    color: white;
 }
 
 body > * {
@@ -38,33 +37,51 @@ noscript {
     color: black;
 }
 
-.hidden {
-    display: none;
-}
-
 article {
-    padding: 50px;
+    width: calc(200px + 2rem);
+    padding: 1rem;
+    line-height: 0;
+    background-color: rgba(255, 255, 255, 0.25);
+    border-right: 1px solid black;
 }
 
-.rangeSlider {
+span {
+    font-size: 0.75rem;
+    line-height: initial;
+    margin-bottom: 0.125rem;
+    display: inline-block;
+    font-weight: bold;
+}
+
+span.value {
+    float: right;
+}
+
+span.value span {
+    float: none;
+    display: inline;
+}
+
+.doubleRange {
     position: relative;
     height: 1rem;
-    width: 100px;
+    width: 100%;
+    margin-bottom: 0.25rem;
 }
 
 input[type=range] {
     -webkit-appearance: none;
     pointer-events: none;
-    height: 100%;
     width: 100%;
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    border-radius: 100vh;
+    height: 1rem;
+    margin-bottom: 0.5rem;
     background-color: lightgray;
+    border-radius: 100vh;
+    overflow: hidden;
 }
 
 input[type=range].min, input[type=range].max {
+    width: calc(100% - 1rem);
     position: absolute;
     left: 0;
     top: 0;
@@ -73,6 +90,12 @@ input[type=range].min, input[type=range].max {
 input[type=range].min {
     z-index: 1;
     background-color: transparent;
+}
+
+input[type=range].max {
+    left: 1rem;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }
 
 @supports not (-moz-appearance: none) {
@@ -84,32 +107,65 @@ input[type=range].min {
         background: gray;
         cursor: ew-resize;
         border-radius: 50%;
-        border: 2px solid black;
-        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) blue;
+        border: 0.25rem solid black;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) black;
     }
 
-    input[type=range].min::-webkit-slider-thumb {
-        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) lightgray;
+    input[type=range].red::-webkit-slider-thumb {
+        border: 0.25rem solid red;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) red;
+    }
+    input[type=range].min.red::-webkit-slider-thumb {
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) lightgray, -2rem 0 0 calc(2rem + 1px) red;
+    }
+    input[type=range].green::-webkit-slider-thumb {
+        border: 0.25rem solid green;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) green;
+    }
+    input[type=range].min.green::-webkit-slider-thumb {
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) lightgray, -2rem 0 0 calc(2rem + 1px) green;
+    }
+    input[type=range].blue::-webkit-slider-thumb {
+        border: 0.25rem solid blue;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) blue;
+    }
+    input[type=range].min.blue::-webkit-slider-thumb {
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) lightgray, -2rem 0 0 calc(2rem + 1px) blue;
     }
 }
 
 @supports (-moz-appearance: none) {
     input[type=range]::-moz-range-thumb {
+        -webkit-appearance: none;
         pointer-events: all;
-        width: 1rem;
-        height: 1rem;
-        background: black;
+        width: 0.5rem;
+        height: 0.5rem;
+        background: gray;
         cursor: ew-resize;
-        border-radius: 0;
-        border: none;
+        border-radius: 50%;
+        border: 0.25rem solid black;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) black;
     }
 
-    input[type=range]::-moz-range-progress {
-        height: 100%;
-        background-color: blue;
+    input[type=range].red::-moz-range-thumb {
+        border: 0.25rem solid red;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) red;
     }
-
-    input[type=range].min::-moz-range-progress {
-        background-color: lightgray;
+    input[type=range].min.red::-moz-range-thumb {
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) lightgray, -2rem 0 0 calc(2rem + 1px) red;
+    }
+    input[type=range].green::-moz-range-thumb {
+        border: 0.25rem solid green;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) green;
+    }
+    input[type=range].min.green::-moz-range-thumb {
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) lightgray, -2rem 0 0 calc(2rem + 1px) green;
+    }
+    input[type=range].blue::-moz-range-thumb {
+        border: 0.25rem solid blue;
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) blue;
+    }
+    input[type=range].min.blue::-moz-range-thumb {
+        box-shadow: -50vw 0 0 calc(50vw - 0.5rem) lightgray, -2rem 0 0 calc(2rem + 1px) blue;
     }
 }

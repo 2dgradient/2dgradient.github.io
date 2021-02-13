@@ -7,30 +7,41 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
         <link rel="stylesheet" href="style.css">
-        <script defer src="script.js"></script>
+        <script defer src="canvas.js"></script>
+        <script defer src="menu.js"></script>
     </head>
 
     <body>
         <noscript>JavaScript is required.</noscript>
         <canvas id="canvas"></canvas>
 
-        <article class="hidden">
-            <input type="number" id="size" value="25"/>
-            <input type="number" id="points" value="5"/>
-            <input type="number" id="shapeSpeed" value="5"/>
-            <input type="number" id="colorSpeed" value="10"/>
+        <article>
+            <span>Radial Gradient Size</span><span class="value"></span>
+            <input type="range" id="size" min="10" max="100" value="25"/>
 
-            <section class="rangeSlider">
+            <span>Color Count</span><span class="value"></span>
+            <input type="range" id="points" min="1" max="25" value="5"/>
+
+            <span>Shape Changing Speed</span><span class="value"></span>
+            <input type="range" id="shapeSpeed" min="0" max="25" value="5"/>
+
+            <span>Color Changing Speed</span><span class="value"></span>
+            <input type="range" id="colorSpeed" min="0" max="50" value="10"/>
+            
+            <span>Red</span><span class="value"><span class="min value"></span> - <span class="max value"></span></span>
+            <section class="doubleRange">
                 <input type="range" class="min red" min="0" max="255" value="0">
                 <input type="range" class="max red" min="0" max="255" value="255">
             </section>
-
-            <section class="rangeSlider">
+            
+            <span>Green</span><span class="value"><span class="min value"></span> - <span class="max value"></span></span>
+            <section class="doubleRange">
                 <input type="range" class="min green" min="0" max="255" value="0">
                 <input type="range" class="max green" min="0" max="255" value="255">
             </section>
-
-            <section class="rangeSlider">
+            
+            <span>Blue</span><span class="value"><span class="min value"></span> - <span class="max value"></span></span>
+            <section class="doubleRange">
                 <input type="range" class="min blue" min="0" max="255" value="0">
                 <input type="range" class="max blue" min="0" max="255" value="255">
             </section>

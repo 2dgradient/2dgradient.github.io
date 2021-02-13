@@ -1,0 +1,95 @@
+var canvas;
+var context;
+var colors;
+
+var config = {
+    intVal: (query) => parseInt(document.querySelector(query).value),
+    size: () => config.intVal('#size'),
+    points: () => config.intVal('#points'),
+    shapeSpeed: () => config.intVal('#shapeSpeed'),
+    colorSpeed: () => config.intVal('#colorSpeed'),
+    screenBounds: () => [[0, canvas.width - 1], [0, canvas.height - 1]],
+    colorBounds: () => {
+        const v = (query) => config.intVal(query);
+        return [[v('.min.red'), v('.max.red')], [v('.min.green'), v('.max.green')], [v('.min.blue'), v('.max.blue')]];
+    }
+};
+
+window.addEventListener('load', () => {
+    canvas = document.getElementById('canvas');
+    window.addEventListener('resize', setCanvasSize);
+    setCanvasSize();
+    initColors();
+    draw();
+    window.setInterval(animate, 1000 / 30);
+});
+
+function setCanvasSize() {
+    canvas.setAttribute('width', window.innerWidth);
+    canvas.setAttribute('height', window.innerHeight);
+    context = canvas.getContext('2d');
+    if (colors) draw();
+}
+
+function initColors() {
+    const array = (l, f) => Array.from({length: l}, (_, i) => f(i));
+    const rand = (bounds) => Math.floor(Math.random() * (bounds[1] - bounds[0] + 1)) + bounds[0];
+    colors = array(config.points(), () => ({
+        p: array(2, (i) => rand(config.screenBounds()[i])),
+        c: array(3, (i) => rand(config.colorBounds()[i])),
+        dp: array(2, () => Math.random() - 0.5),
+        dc: array(3, () => Math.random() - 0.5)
+    }));
+}
+
+function animate() {
+    const sign = (v, s) => (v < 0 && s > 0) || (v > 0 && s < 0) ? v * -1 : v;
+    const apply = (v, d, m, b, c) => {
+        c[v] = c[v].map((x, i) => x + c[d][i] * m);
+        c[d] = c[d].map((x, i) => c[v][i] < b[i][0] || c[v][i] > b[i][1] ? sign(x, b[i][0] - c[v][i]) : x);
+        return c;
+    };
+    colors = colors.map((c) => apply('c', 'dc', config.colorSpeed(), config.colorBounds(), apply('p', 'dp', config.shapeSpeed(), config.screenBounds(), c)));
+    draw();
+}
+
+function draw() {
+    const overflow = 2;
+    const size = config.size();
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    const rgba = (c, a) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
+    for (let y = 0, dy = Math.sqrt(Math.pow(size, 2) * 3) / 2, r = 0; y < canvas.height + size; y += dy, ++r) {
+        for (let x = size / 2 * (r % 2); x < canvas.width + size; x += size) {
+            let clr = gradientColor(x, y);
+            let grd = context.createRadialGradient(x, y, 0, x, y, size * overflow);
+            grd.addColorStop(0, rgba(clr, 0.5));
+            grd.addColorStop(1, rgba(clr, 0));
+            context.fillStyle = grd;
+            context.fillRect(x - size * overflow, y - size * overflow, size * overflow * 2, size * overflow * 2);
+        }
+    }
+}
+
+function gradientColor(x, y) {
+    const angle = (x1, y1, x2, y2, x3, y3) => Math.abs(Math.atan2((x2 - x1) * (y2 - y3) - (y2 - y1) * (x2 - x3), (x2 - x1) * (x2 - x3) + (y2 - y1) * (y2 - y3)));
+    let clrs = colors.map((c) => {
+        c.d = Math.pow(c.p[0] - x, 2) + Math.pow(c.p[1] - y, 2);
+        c.a = Math.atan2(c.p[1] - y, c.p[0] - x);
+        return c;
+    }).sort((a, b) => a.d - b.d);
+    let clr = [0, 0, 0];
+    let scale = 0;
+    
+    for (let i = 0; i < clrs.length; ++i) {
+        let m = 1;
+        for (let j = i - 1; j >= 0; --j) {
+            let a1 = angle(x, y, clrs[i].p[0], clrs[i].p[1], clrs[j].p[0], clrs[j].p[1]);
+            let a2 = Math.abs(Math.abs(clrs[i].a - clrs[j].a) - Math.PI) - a1;
+            m = Math.min(m, a2 == 0 ? 1 : Math.pow(a1 / a2, 2));
+        }
+        clr = clr.map((x, j) => x + clrs[i].c[j] * m);
+        scale += m;
+    }
+
+    return clr.map((x) => Math.max(0, Math.min(255, x / scale)));
+}
