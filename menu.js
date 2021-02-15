@@ -1,4 +1,11 @@
 window.addEventListener('load', () => {
+    document.getElementById('toggle').addEventListener('click', () => {
+        let root = document.documentElement;
+        if (parseInt(getComputedStyle(root).getPropertyValue('--menu-popout')) > 0)
+            root.style.setProperty('--menu-popout', '0px');
+        else root.style.setProperty('--menu-popout', getComputedStyle(root).getPropertyValue('--menu-size'));
+    });
+
     let sliders = document.querySelectorAll('input[type=range]');
     for (let slider of sliders) {
         update(slider);
@@ -7,7 +14,7 @@ window.addEventListener('load', () => {
 });
 
 function update(slider) {
-    if (slider.parentElement.classList.contains('doubleRange')) {
+    if (slider.parentElement.classList.contains('doubleSlider')) {
         let parent = slider.parentElement;
         let classes = [['.min', Math.min], ['.max', Math.max]];
         if (slider.classList.contains('max')) classes.reverse();

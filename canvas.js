@@ -1,14 +1,18 @@
 var canvas;
 var context;
-var colors;
+var colors = [];
 
 var config = {
     intVal: (query) => parseInt(document.querySelector(query).value),
     size: () => config.intVal('#size'),
     points: () => config.intVal('#points'),
     shapeSpeed: () => config.intVal('#shapeSpeed'),
-    colorSpeed: () => config.intVal('#colorSpeed'),
-    screenBounds: () => [[0, canvas.width - 1], [0, canvas.height - 1]],
+    colorSpeed: () => config.intVal('#colorSpeed') / 255,
+    screenBounds: () => {
+        let menu = document.getElementById('menu');
+        let offset = { width: menu.offsetWidth, height: menu.offsetHeight };
+        return [[offset.width < canvas.width ? offset.width : 0, canvas.width - 1], [0, canvas.height - 1 - (offset.height < canvas.height ? offset.height : 0)]];
+    },
     colorBounds: () => {
         const v = (query) => config.intVal(query);
         return [[v('.min.red'), v('.max.red')], [v('.min.green'), v('.max.green')], [v('.min.blue'), v('.max.blue')]];
@@ -19,7 +23,7 @@ window.addEventListener('load', () => {
     canvas = document.getElementById('canvas');
     window.addEventListener('resize', setCanvasSize);
     setCanvasSize();
-    initColors();
+    setColors();
     draw();
     window.setInterval(animate, 1000 / 30);
 });
@@ -28,28 +32,31 @@ function setCanvasSize() {
     canvas.setAttribute('width', window.innerWidth);
     canvas.setAttribute('height', window.innerHeight);
     context = canvas.getContext('2d');
-    if (colors) draw();
+    if (colors.length > 0) draw();
 }
 
-function initColors() {
+function setColors() {
+    let points = config.points();
+    colors.length = Math.min(colors.length, points);
     const array = (l, f) => Array.from({length: l}, (_, i) => f(i));
     const rand = (bounds) => Math.floor(Math.random() * (bounds[1] - bounds[0] + 1)) + bounds[0];
-    colors = array(config.points(), () => ({
+    colors = colors.concat(array(Math.max(0, points - colors.length), () => ({
         p: array(2, (i) => rand(config.screenBounds()[i])),
         c: array(3, (i) => rand(config.colorBounds()[i])),
         dp: array(2, () => Math.random() - 0.5),
         dc: array(3, () => Math.random() - 0.5)
-    }));
+    })));
 }
 
 function animate() {
     const sign = (v, s) => (v < 0 && s > 0) || (v > 0 && s < 0) ? v * -1 : v;
-    const apply = (v, d, m, b, c) => {
-        c[v] = c[v].map((x, i) => x + c[d][i] * m);
+    const apply = (v, d, m, b, r, c) => {
+        c[v] = c[v].map((x, i) => x + c[d][i] * m * (r ? b[i][1] - b[i][0] + Math.max(b[i][0] - c[v][i], c[v][i] - b[i][1], 0) : 1));
         c[d] = c[d].map((x, i) => c[v][i] < b[i][0] || c[v][i] > b[i][1] ? sign(x, b[i][0] - c[v][i]) : x);
         return c;
     };
-    colors = colors.map((c) => apply('c', 'dc', config.colorSpeed(), config.colorBounds(), apply('p', 'dp', config.shapeSpeed(), config.screenBounds(), c)));
+    if (colors.length != config.points()) setColors();
+    colors = colors.map((c) => apply('c', 'dc', config.colorSpeed(), config.colorBounds(), true, apply('p', 'dp', config.shapeSpeed(), config.screenBounds(), false, c)));
     draw();
 }
 
