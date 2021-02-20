@@ -91,7 +91,7 @@ noscript {
 }
 
 #handle::after {
-    top: 50%;
+    top: calc(30% + 20%);
     transform: skewX(calc(var(--handle-skew) * -1));
 }
 
