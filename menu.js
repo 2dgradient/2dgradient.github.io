@@ -62,7 +62,7 @@ function move(offset) {
 function up(offset) {
     if (isNaN(oldOffset)) return;
     setTranstition(true);
-    if (offsetDiff == 0) offsetDiff = moved ? offset - (menuSize + handleSize) / 2 : -getPopout() + 1;
+    if (offsetDiff == 0) offsetDiff = moved ? offset - menuSize / 2 : -getPopout() + 1;
     setPopout(offsetDiff >= 0 ? menuSize : 0);
     oldOffset = undefined;
     offsetDiff = undefined;
