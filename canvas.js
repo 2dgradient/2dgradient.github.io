@@ -9,9 +9,9 @@ var config = {
     shapeSpeed: () => config.intVal('#shapeSpeed'),
     colorSpeed: () => config.intVal('#colorSpeed') / 255,
     screenBounds: () => {
-        let menu = document.getElementById('menu');
-        let offset = { width: menu.offsetWidth, height: menu.offsetHeight };
-        return [[offset.width < canvas.width ? offset.width : 0, canvas.width - 1], [0, canvas.height - 1 - (offset.height < canvas.height ? offset.height : 0)]];
+        let offset = [parseInt(getComputedStyle(document.documentElement).getPropertyValue('--menu-popout-val')), 0];
+        if (document.getElementById('menu').offsetHeight < window.innerHeight) offset.reverse();
+        return [[offset[0], canvas.width - 1], [0, canvas.height - 1 - offset[1]]];
     },
     colorBounds: () => {
         const v = (query) => config.intVal(query);

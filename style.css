@@ -1,8 +1,11 @@
 :root {
-    --toggle-size: 50px;
-    --menu-size: 250px;
-    --menu-popout: 0px;
+    --handle-size: 25px;
+    --menu-size-val: 300;
+    --menu-popout-val: 0;
     --transition-time: 0.5s;
+    --menu-size: calc(var(--menu-size-val) * 1px);
+    --menu-popout: calc(var(--menu-popout-val) * 1px);
+    --handle-skew: calc((var(--menu-size-val) / 2 - var(--menu-popout-val)) / var(--menu-size-val) * 90deg);
 }
 
 * {
@@ -21,6 +24,10 @@
 
 ::-webkit-scrollbar {
     display: none;
+}
+
+.notransition * {
+    transition: none !important;
 }
 
 html, body {
@@ -58,22 +65,37 @@ noscript {
     padding: 1rem;
 }
 
-#toggle {
-    width: calc(var(--toggle-size) / 2);
-    height: var(--toggle-size);
+#handle {
+    width: var(--handle-size);
+    height: calc(var(--handle-size) * 2);
     top: 50%;
     left: var(--menu-popout);
     transform: translateY(-50%);
-    background-color: white;
     border: 1px solid black;
     border-left: none;
     border-top-right-radius: 100vw;
     border-bottom-right-radius: 100vw;
-    display: flex;
-    align-items: center;
+    text-align: center;
 }
 
-#menu, #toggle {
+#handle::before, #handle::after {
+    width: 5px;
+    height: 20%;
+    bottom: 50%;
+    left: calc(100% / 3);
+    background-color: black;
+    transform: skewX(var(--handle-skew));
+    transition: var(--transition-time);
+    position: absolute;
+    content: '';
+}
+
+#handle::after {
+    top: 50%;
+    transform: skewX(calc(var(--handle-skew) * -1));
+}
+
+#menu, #handle {
     background-color: rgba(255, 255, 255, 0.25);
     transition: left var(--transition-time);
 }
@@ -82,19 +104,19 @@ noscript {
     #menu {
         width: 100%;
         height: var(--menu-size);
-        left: unset;
         bottom: calc(var(--menu-popout) - var(--menu-size));
-        justify-content: center;
-        display: flex;
+        left: unset;
         border-right: none;
         border-top: 1px solid black;
+        justify-content: center;
+        display: flex;
     }
 
     #menu div {
         width: var(--menu-size);
     }
 
-    #toggle {
+    #handle {
         left: unset;
         top: unset;
         right: 50%;
@@ -102,16 +124,16 @@ noscript {
         transform: translate(50%, 25%) rotate(-90deg);
     }
 
-    #menu, #toggle {
+    #menu, #handle {
         transition: bottom var(--transition-time);
     }
 }
 
 span {
-    font-size: 0.75rem;
-    line-height: initial;
     margin-bottom: 0.125rem;
     display: inline-block;
+    line-height: initial;
+    font-size: 0.75rem;
     font-weight: bold;
 }
 
@@ -125,10 +147,10 @@ span.value span {
 }
 
 .doubleSlider {
-    position: relative;
-    height: 1rem;
     width: 100%;
+    height: 1rem;
     margin-bottom: 0.25rem;
+    position: relative;
 }
 
 input[type=range] {
