@@ -112,6 +112,7 @@ noscript {
     }
 
     #menu div {
+        height: fit-content;
         width: var(--menu-size);
     }
 

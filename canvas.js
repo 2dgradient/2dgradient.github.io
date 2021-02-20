@@ -4,18 +4,19 @@ var colors = [];
 
 var config = {
     intVal: (query) => parseInt(document.querySelector(query).value),
-    size: () => config.intVal('#size'),
+    size: () => config.intVal('#size') * 20,
     points: () => config.intVal('#points'),
-    shapeSpeed: () => config.intVal('#shapeSpeed'),
-    colorSpeed: () => config.intVal('#colorSpeed') / 255,
+    colorStrength: () => config.intVal('#colorStrength'),
+    colorSpeed: () => config.intVal('#colorSpeed') / 255 * 3,
+    shapeSpeed: () => config.intVal('#shapeSpeed') * 5,
+    colorBounds: () => {
+        const v = (query) => config.intVal(query);
+        return [[v('.min.red'), v('.max.red')], [v('.min.green'), v('.max.green')], [v('.min.blue'), v('.max.blue')]];
+    },
     screenBounds: () => {
         let offset = [parseInt(getComputedStyle(document.documentElement).getPropertyValue('--menu-popout-val')), 0];
         if (document.getElementById('menu').offsetHeight < window.innerHeight) offset.reverse();
         return [[offset[0], canvas.width - 1], [0, canvas.height - 1 - offset[1]]];
-    },
-    colorBounds: () => {
-        const v = (query) => config.intVal(query);
-        return [[v('.min.red'), v('.max.red')], [v('.min.green'), v('.max.green')], [v('.min.blue'), v('.max.blue')]];
     }
 };
 
@@ -92,8 +93,9 @@ function gradientColor(x, y) {
         for (let j = i - 1; j >= 0; --j) {
             let a1 = angle(x, y, clrs[i].p[0], clrs[i].p[1], clrs[j].p[0], clrs[j].p[1]);
             let a2 = Math.abs(Math.abs(clrs[i].a - clrs[j].a) - Math.PI) - a1;
-            m = Math.min(m, a2 == 0 ? 1 : Math.pow(a1 / a2, 2));
+            m = Math.min(m, a2 == 0 ? 1 : a1 / a2);
         }
+        m = Math.pow(m, config.colorStrength());
         clr = clr.map((x, j) => x + clrs[i].c[j] * m);
         scale += m;
     }
