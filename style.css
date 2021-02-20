@@ -1,6 +1,6 @@
 :root {
     --handle-size: 25px;
-    --menu-size-val: 300;
+    --menu-size-val: 275;
     --menu-popout-val: 0;
     --transition-time: 0.5s;
     --menu-size: calc(var(--menu-size-val) * 1px);
