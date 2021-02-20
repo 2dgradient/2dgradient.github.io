@@ -33,7 +33,6 @@ function setCanvasSize() {
     canvas.setAttribute('height', window.innerHeight);
     context = canvas.getContext('2d');
     if (colors.length > 0) draw();
-    alert();
 }
 
 function setColors() {
