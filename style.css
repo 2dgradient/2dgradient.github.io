@@ -81,7 +81,7 @@ noscript {
 #handle::before, #handle::after {
     width: 5px;
     height: 20%;
-    bottom: 50%;
+    top: 30%;
     left: calc(100% / 3);
     background-color: black;
     transform: skewX(var(--handle-skew));
@@ -91,7 +91,8 @@ noscript {
 }
 
 #handle::after {
-    top: 50%;
+    top: unset;
+    bottom: 30%;
     transform: skewX(calc(var(--handle-skew) * -1));
 }
 
