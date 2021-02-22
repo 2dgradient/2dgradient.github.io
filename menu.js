@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
     };
 
     menuSize = parseInt(getProperty('--menu-size-val'));
-    handleSize = parseInt(getProperty('--handle-size'));
+    handleSize = parseInt(getProperty('--handle-size')) * 2;
     transitionTime = getProperty('--transition-time');
     const mouse = (e, f) => f(offset(e.clientX, e.clientY));
     const touch = (e, f) => f(offset(e.changedTouches[0].clientX, e.changedTouches[0].clientY));
