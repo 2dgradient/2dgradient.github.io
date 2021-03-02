@@ -20,7 +20,7 @@ window.addEventListener('load', () => {
     transitionTime = getProperty('--transition-time');
     const mouse = (e, f) => f(offset(e.clientX, e.clientY));
     const touch = (e, f) => f(offset(e.changedTouches[0].clientX, e.changedTouches[0].clientY));
-    const offset = (x, y) => document.getElementById('menu').offsetHeight < window.innerHeight ? window.innerHeight - y - 1 : x;
+    const offset = (x, y) => parseInt(getComputedStyle(document.getElementById('menu')).getPropertyValue('border-top-width')) ? window.innerHeight - y - 1 : x;
     let clicks = [['mousedown', mouse, down], ['mousemove', mouse, move], ['mouseup', mouse, up], ['touchstart', touch, down], ['touchmove', touch, move], ['touchend', touch, up]];
     for (const click of clicks) document.addEventListener(click[0], (e) => click[1](e, click[2]));
 });

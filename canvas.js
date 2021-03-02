@@ -15,7 +15,7 @@ var config = {
     },
     screenBounds: () => {
         let offset = [parseInt(getComputedStyle(document.documentElement).getPropertyValue('--menu-popout-val')), 0];
-        if (document.getElementById('menu').offsetHeight < window.innerHeight) offset.reverse();
+        if (parseInt(getComputedStyle(document.getElementById('menu')).getPropertyValue('border-top-width'))) offset.reverse();
         return [[offset[0], canvas.width - 1], [0, canvas.height - 1 - offset[1]]];
     }
 };
