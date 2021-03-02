@@ -3,14 +3,14 @@ var context;
 var colors = [];
 
 var config = {
-    intVal: (query) => parseInt(document.querySelector(query).value),
+    intVal: query => parseInt(document.querySelector(query).value),
     size: () => config.intVal('#size') * 20,
     points: () => config.intVal('#points'),
     colorStrength: () => Math.pow(2, config.intVal('#colorStrength') - 1),
     colorSpeed: () => config.intVal('#colorSpeed') / 255 * 3,
     shapeSpeed: () => config.intVal('#shapeSpeed') * 5,
     colorBounds: () => {
-        const v = (query) => config.intVal(query);
+        const v = query => config.intVal(query);
         return [[v('.min.red'), v('.max.red')], [v('.min.green'), v('.max.green')], [v('.min.blue'), v('.max.blue')]];
     },
     screenBounds: () => {
@@ -40,10 +40,10 @@ function setColors() {
     let points = config.points();
     colors.length = Math.min(colors.length, points);
     const array = (l, f) => Array.from({length: l}, (_, i) => f(i));
-    const rand = (bounds) => Math.floor(Math.random() * (bounds[1] - bounds[0] + 1)) + bounds[0];
+    const rand = bounds => Math.floor(Math.random() * (bounds[1] - bounds[0] + 1)) + bounds[0];
     colors = colors.concat(array(Math.max(0, points - colors.length), () => ({
-        p: array(2, (i) => rand(config.screenBounds()[i])),
-        c: array(3, (i) => rand(config.colorBounds()[i])),
+        p: array(2, i => rand(config.screenBounds()[i])),
+        c: array(3, i => rand(config.colorBounds()[i])),
         dp: array(2, () => Math.random() - 0.5),
         dc: array(3, () => Math.random() - 0.5)
     })));
@@ -57,7 +57,20 @@ function animate() {
         return c;
     };
     if (colors.length != config.points()) setColors();
-    colors = colors.map((c) => apply('c', 'dc', config.colorSpeed(), config.colorBounds(), true, apply('p', 'dp', config.shapeSpeed(), config.screenBounds(), false, c)));
+    colors = colors.map(c => apply('c', 'dc', config.colorSpeed(), config.colorBounds(), true, apply('p', 'dp', config.shapeSpeed(), config.screenBounds(), false, c)));
+
+    const radius = 30 * 2;
+    for (let i = 0; i < colors.length; ++i) {
+        for (let j = i + 1; j < colors.length; ++j) {
+            const c = [colors[i], colors[j]];
+            let d = Math.sqrt(Math.pow(c[1].p[0] - c[0].p[0], 2) + Math.pow(c[1].p[1] - c[0].p[1], 2));
+            if (d > radius) continue;
+            let a = Math.atan2(c[1].p[1] - c[0].p[1], c[1].p[0] - c[0].p[0]);
+            let aCoSi = [Math.cos(a), Math.sin(a)];
+            [i, j].map((c, ci) => { colors[c].p = colors[c].p.map((x, xi) => x + (ci * 2 - 1) * (radius - d) * aCoSi[xi] / 2) });
+        }
+    }
+    
     draw();
 }
 
@@ -80,10 +93,11 @@ function draw() {
 
 function gradientColor(x, y) {
     const angle = (x1, y1, x2, y2, x3, y3) => Math.abs(Math.atan2((x2 - x1) * (y2 - y3) - (y2 - y1) * (x2 - x3), (x2 - x1) * (x2 - x3) + (y2 - y1) * (y2 - y3)));
-    let clrs = colors.map((c) => {
-        c.d = Math.pow(c.p[0] - x, 2) + Math.pow(c.p[1] - y, 2);
-        c.a = Math.atan2(c.p[1] - y, c.p[0] - x);
-        return c;
+    let clrs = colors.map(c => {
+        return Object.assign({
+            d: Math.pow(c.p[0] - x, 2) + Math.pow(c.p[1] - y, 2),
+            a: Math.atan2(c.p[1] - y, c.p[0] - x)
+        }, c);
     }).sort((a, b) => a.d - b.d);
     let clr = [0, 0, 0];
     let scale = 0;
@@ -100,5 +114,5 @@ function gradientColor(x, y) {
         scale += m;
     }
 
-    return clr.map((x) => Math.max(0, Math.min(255, x / scale)));
+    return clr.map(x => Math.max(0, Math.min(255, x / scale)));
 }
