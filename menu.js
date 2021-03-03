@@ -1,7 +1,7 @@
 window.addEventListener('load', () => {
     let sliders = document.querySelectorAll('input[type=range]');
     for (let slider of sliders) {
-        const update = (slider) => {
+        const update = slider => {
             if (slider.parentElement.classList.contains('doubleSlider')) {
                 let parent = slider.parentElement;
                 let classes = [['.min', Math.min], ['.max', Math.max]];
@@ -12,7 +12,7 @@ window.addEventListener('load', () => {
             else slider.previousElementSibling.innerHTML = slider.value;
         }
         update(slider);
-        slider.addEventListener('input', (e) => update(e.target));
+        slider.addEventListener('input', e => update(e.target));
     };
 
     menuSize = parseInt(getProperty('--menu-size-val'));
@@ -25,11 +25,11 @@ window.addEventListener('load', () => {
     for (const click of clicks) document.addEventListener(click[0], (e) => click[1](e, click[2]));
 });
 
-const getProperty = (p) => getComputedStyle(document.documentElement).getPropertyValue(p);
+const getProperty = p => getComputedStyle(document.documentElement).getPropertyValue(p);
 const setProperty = (p, v) => document.documentElement.style.setProperty(p, v);
 const getPopout = () => parseInt(getProperty('--menu-popout-val'));
-const setPopout = (v) => setProperty('--menu-popout-val', v);
-const setTranstition = (b) => setProperty('--transition-time', b ? transitionTime : '0s');
+const setPopout = v => setProperty('--menu-popout-val', v);
+const setTranstition = b => setProperty('--transition-time', b ? transitionTime : '0s');
 
 var menuSize;
 var handleSize;
