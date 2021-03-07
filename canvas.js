@@ -107,12 +107,12 @@ function gradientColor(x, y) {
         for (let j = i - 1; j >= 0; --j) {
             let a1 = angle(x, y, clrs[i].p[0], clrs[i].p[1], clrs[j].p[0], clrs[j].p[1]);
             let a2 = Math.abs(Math.abs(clrs[i].a - clrs[j].a) - Math.PI) - a1;
-            m = Math.min(m, a2 == 0 ? 1 : a1 / a2);
+            m = Math.min(m, a2 == 0 ? 0 : a1 / a2);
         }
         m = Math.pow(m, config.colorStrength());
-        clr = clr.map((x, j) => x + clrs[i].c[j] * m);
+        clr = clr.map((v, j) => v + clrs[i].c[j] * m);
         scale += m;
     }
 
-    return clr.map(x => Math.max(0, Math.min(255, x / scale)));
+    return clr.map(v => Math.max(0, Math.min(255, v / scale)));
 }
