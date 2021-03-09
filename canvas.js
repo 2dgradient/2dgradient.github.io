@@ -92,12 +92,22 @@ function draw() {
 }
 
 function gradientColor(x, y) {
-    let clrs = colors.map(c => Object.assign({d: Math.pow(c.p[0] - x, 2) + Math.pow(c.p[1] - y, 2)}, c)).sort((a, b) => a.d - b.d);
+    const angle = (x1, y1, x2, y2, x3, y3) => Math.abs(Math.atan2((x2 - x1) * (y2 - y3) - (y2 - y1) * (x2 - x3), (x2 - x1) * (x2 - x3) + (y2 - y1) * (y2 - y3)));
+    let clrs = colors.map(c => Object.assign({
+            d: Math.pow(c.p[0] - x, 2) + Math.pow(c.p[1] - y, 2),
+            a: Math.atan2(c.p[1] - y, c.p[0] - x)
+    }, c)).sort((a, b) => a.d - b.d);
     let clr = [0, 0, 0];
     let scale = 0;
-
+    
     for (let i = 0; i < clrs.length; ++i) {
-        let m = Math.pow(clrs.slice(0, 1).reduce((p, v) => Math.min(p, v.d / clrs[i].d), 1), config.colorStrength());
+        let m = 1;
+        for (let j = i - 1; j >= 0; --j) {
+            let a1 = angle(x, y, clrs[i].p[0], clrs[i].p[1], clrs[j].p[0], clrs[j].p[1]);
+            let a2 = Math.abs(Math.abs(clrs[i].a - clrs[j].a) - Math.PI) - a1;
+            m = Math.min(m, a2 == 0 ? 0 : a1 / a2);
+        }
+        m = Math.pow(m, config.colorStrength());
         clr = clr.map((v, j) => v + clrs[i].c[j] * m);
         scale += m;
     }
