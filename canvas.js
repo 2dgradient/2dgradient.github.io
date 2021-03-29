@@ -4,7 +4,7 @@ var colors = [];
 
 var config = {
     intVal: query => parseInt(document.querySelector(query).value),
-    size: () => config.intVal('#size') * 20,
+    size: () => config.intVal('#size') * 25,
     points: () => config.intVal('#points'),
     colorStrength: () => config.intVal('#colorStrength'),
     colorSpeed: () => config.intVal('#colorSpeed') / 255 * 3,
@@ -92,7 +92,19 @@ function draw() {
 }
 
 function gradientColor(x, y) {
-    const angle = (x1, y1, x2, y2, x3, y3) => Math.abs(Math.atan2((x2 - x1) * (y2 - y3) - (y2 - y1) * (x2 - x3), (x2 - x1) * (x2 - x3) + (y2 - y1) * (y2 - y3)));
+    let clrs = colors.map(c => Object.assign({d: Math.pow(c.p[0] - x, 2) + Math.pow(c.p[1] - y, 2)}, c)).sort((a, b) => a.d - b.d);
+    let clr = [0, 0, 0];
+    let scale = 0;
+
+    for (let i = 0; i < clrs.length; ++i) {
+        let m = Math.pow(clrs[i].d == 0 ? 1 : clrs[0].d / clrs[i].d, config.colorStrength());
+        clr = clr.map((v, j) => v + clrs[i].c[j] * m);
+        scale += m;
+    }
+
+    return clr.map(v => Math.max(0, Math.min(255, v / scale)));
+
+    /* const angle = (x1, y1, x2, y2, x3, y3) => Math.abs(Math.atan2((x2 - x1) * (y2 - y3) - (y2 - y1) * (x2 - x3), (x2 - x1) * (x2 - x3) + (y2 - y1) * (y2 - y3)));
     let clrs = colors.map(c => Object.assign({
         d: Math.pow(c.p[0] - x, 2) + Math.pow(c.p[1] - y, 2),
         a: Math.atan2(c.p[1] - y, c.p[0] - x)
@@ -112,5 +124,5 @@ function gradientColor(x, y) {
         scale += m;
     }
 
-    return clr.map(v => Math.max(0, Math.min(255, v / scale)));
+    return clr.map(v => Math.max(0, Math.min(255, v / scale))); */
 }
